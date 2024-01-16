@@ -8,12 +8,12 @@ packer {
 }
 
 source "amazon-ebs" "ubuntu" {
-  ami_name      = "packer-linux-aws"
+  ami_name      = "learn-packer-linux-aws"
   instance_type = "t2.micro"
   region        = "ap-southeast-1"
   source_ami_filter {
     filters = {
-      name                = "ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*"
+      name                = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -24,7 +24,7 @@ source "amazon-ebs" "ubuntu" {
 }
 
 build {
-  name    = "packer"
+  name    = "learn-packer"
   sources = [
     "source.amazon-ebs.ubuntu"
   ]
@@ -33,23 +33,13 @@ build {
     environment_vars = [
       "FOO=hello world",
     ]
-
+    #inline = [
+      #"sudo apt-get update",
+      #"sudo apt-get install -y nginx docker.io vim lvm2",      
+    #]
     scripts = [
       "scripts/install_software.sh",
     ]
-
-    ## Cannot use both scripts and inline at the same time 
-    #inline = [
-    #  "sudo apt-get install -y apache2",
-    #  "sudo systemctl enable apache2",
-    #  "sudo systemctl start apache2",
-    # "sudo sh -c 'echo Welcome to my Apache server > /var/www/html/index.html'"
-    #]
-  }
-
-  provisioner "file" {
-    source      = "sourcefile/"              # Copy all files and subdirs
-    destination = "/var/www/html/"
   }
 }
 
